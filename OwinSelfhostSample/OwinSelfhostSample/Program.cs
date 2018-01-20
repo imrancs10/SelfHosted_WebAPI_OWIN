@@ -5,27 +5,34 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Topshelf;
 
 namespace OwinSelfhostSample
 {
     class Program
     {
-        static void Main(string[] args)
+        public static int Main()
         {
-            string baseAddress = "http://localhost:9000/";
-
-            // Start OWIN host 
-            using (WebApp.Start<Startup>(url: baseAddress))
+            var exitCode = HostFactory.Run(x =>
             {
-                // Create HttpCient and make a request to api/values 
-                HttpClient client = new HttpClient();
+                x.SetStartTimeout(TimeSpan.FromSeconds(120));
+                x.SetStopTimeout(TimeSpan.FromSeconds(120));
+                x.Service<HostingConfiguration>();
+                x.RunAsLocalSystem();
+                x.StartAutomatically();
+                x.SetDescription("Web API Service");
+                x.SetDisplayName("owin.test");
+                x.SetServiceName("owin.test");
+            });
 
-                var response = client.GetAsync(baseAddress + "api/values").Result;
+            // Create HttpCient and make a request to api/values 
+            //HttpClient client = new HttpClient();
+            //var response = client.GetAsync("http://localhost:8090/" + "api/Get").Result;
+            //Console.WriteLine(response);
+            //Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+            //Console.ReadLine();
 
-                Console.WriteLine(response);
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
-                Console.ReadLine();
-            }
+            return (int)exitCode;
         }
     }
 }
