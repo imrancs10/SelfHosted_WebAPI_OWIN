@@ -9,6 +9,7 @@ using Topshelf;
 
 namespace OwinSelfhostSample
 {
+    //this is a client application to test self hosting web Api application
     class Program
     {
         public static int Main()
